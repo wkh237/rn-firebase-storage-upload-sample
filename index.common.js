@@ -38,7 +38,7 @@ const PASSWORD = ''
 
 // Initialize Firebase
 const config = {
-  apiKey: API_KEY
+  apiKey: API_KEY,
   authDomain: `${APP_NAME}.firebaseapp.com`,
   databaseURL: `https://${APP_NAME}.firebaseio.com`,
   storageBucket: `${APP_NAME}.appspot.com`,
