@@ -23,4 +23,4 @@ Then run React Native app as usual
 ## More Information
 
 Web polyfills of react-native-fetch-blob is still in development, more Information
-about the project and document, please see [the wiki].(https://github.com/wkh237/react-native-fetch-blob/wiki/Web-API-Polyfills-(work-in-progress))
+about the project and document, please see [the wiki](https://github.com/wkh237/react-native-fetch-blob/wiki/Web-API-Polyfills-(work-in-progress)).
