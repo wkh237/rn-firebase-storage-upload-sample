@@ -9,7 +9,7 @@
     "firebase": "^3.2.0",
     "react": "15.2.1",
     "react-native": "^0.28.0",
-    "react-native-fetch-blob": "^0.8.0-alpha.5",
+    "react-native-fetch-blob": "^0.8.0",
     "react-native-testkit": "^0.1.1"
   }
 }

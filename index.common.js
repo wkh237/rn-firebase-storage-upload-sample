@@ -90,28 +90,29 @@ describe('firebase login', (report, done) => {
 
 
 describe('upload file to firebase', (report, done) => {
-  // create Blob from BASE64 data
-  let blob = new Blob(RNFetchBlob.wrap(testFile), { type : 'image/png;BASE64'})
-  // Blob creation is async, start upload task after it created
-  blob.onCreated(() => {
-    // upload image using Firebase SDK
-    return firebase.storage()
-      .ref('rn-firebase-upload')
-      .child(testImageName)
-      .put(blob, { contentType : 'image/png' })
-      .then((snapshot) => {
-        report(
-          <Assert key="upload success"
-            expect={true}
-            actual={true}/>,
-          <Info key="uploaded file stat" >
-            <Text>{snapshot.totalBytes}</Text>
-            <Text>{JSON.stringify(snapshot.metadata)}</Text>
-          </Info>)
-        blob.close()
-        done()
-      })
-  })
+  let rnfbURI = RNFetchBlob.wrap(testFile)
+  // create Blob from file path
+  Blob
+    .build(rnfbURI, { type : 'image/png;'})
+    .then((blob) => {
+      // upload image using Firebase SDK
+      firebase.storage()
+        .ref('rn-firebase-upload')
+        .child(testImageName)
+        .put(blob, { contentType : 'image/png' })
+        .then((snapshot) => {
+          report(
+            <Assert key="upload success"
+              expect={true}
+              actual={true}/>,
+            <Info key="uploaded file stat" >
+              <Text>{snapshot.totalBytes}</Text>
+              <Text>{JSON.stringify(snapshot.metadata)}</Text>
+            </Info>)
+          blob.close()
+          done()
+        })
+    })
 })
 
 describe('display firebase storage item', (report, done) => {
