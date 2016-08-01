@@ -28,7 +28,7 @@ window.Blob = Blob
 const { Assert, Comparer, Info, prop } = RNTest
 const dirs = RNFetchBlob.fs.dirs
 const prefix = ((Platform.OS === 'android') ? 'file://' : '')
-const testImageName = `image-from-react-native-${Platform.OS}-${new Date()}.png`
+const testImageName = `image-from-react-native-issue-${Platform.OS}-${new Date()}.png`
 const testFile = null
 
 const API_KEY = ''
@@ -88,67 +88,30 @@ describe('firebase login', (report, done) => {
   })
 })
 
+describe('test', (report, done) => {
 
-describe('upload file to firebase', (report, done) => {
-  let rnfbURI = RNFetchBlob.wrap(testFile)
-  // create Blob from file path
-  Blob
-    .build(rnfbURI, { type : 'image/png;'})
-    .then((blob) => {
-      // upload image using Firebase SDK
-      firebase.storage()
-        .ref('rn-firebase-upload')
-        .child(testImageName)
-        .put(blob, { contentType : 'image/png' })
-        .then((snapshot) => {
-          report(
-            <Assert key="upload success"
-              expect={true}
-              actual={true}/>,
-            <Info key="uploaded file stat" >
-              <Text>{snapshot.totalBytes}</Text>
-              <Text>{JSON.stringify(snapshot.metadata)}</Text>
-            </Info>)
-          blob.close()
-          done()
-        })
-    })
-})
+  RNFetchBlob
+            .config({ fileCache : true, appendExt : 'png' })
+            .fetch('GET', 'https://avatars0.githubusercontent.com/u/5063785?v=3&s=460')
+            .then((resp) => {
+              testFile = resp.path()
+              console.log('PATH:', testFile)
+              Blob.build(RNFetchBlob.wrap(testFile), { type : 'image/png;BASE64'})
+                // Blob creation is async, start upload task after it created
+                .then((blob) => {
+                  // upload image using Firebase SDK
+                  firebase.storage()
+                  .ref('rn-firebase-upload')
+                  .child(testImageName)
+                  .put(blob, { contentType : 'image/png' })
+                  .then((snapshot) => {
+                    console.log('SNAPSHOT:', snapshot)
+                    blob.close()
+                    done()
+                  })
+              })
+          })
 
-describe('display firebase storage item', (report, done) => {
-  firebase
-    .storage()
-    .ref('rn-firebase-upload/' + testImageName)
-    .getDownloadURL().then((url) => {
-      report(
-      <Info key="verify the result">
-        <Image
-          style={{ alignSelf : 'center', height : 256, width : 256 }}
-          source={{ uri : url }}/>
-      </Info>)
-      done()
-    })
-})
-
-describe('download and display uploaded item', (report, done) => {
-  firebase
-    .storage()
-    .ref('rn-firebase-upload/' + testImageName)
-    .getDownloadURL()
-    .then((url) => {
-        RNFetchBlob
-        .config({ fileCache : true, appendExt : 'jpg' })
-        .fetch('GET', url)
-        .then((resp) => {
-          report(
-            <Info key={resp.path()}>
-              <Image
-                style={{ alignSelf : 'center', height : 256, width : 256 }}
-                source={{ uri : prefix + resp.path() }}/>
-            </Info>)
-          done()
-        })
-    })
 })
 
 class RNFirebaseUploadSample extends Component {
